@@ -74,7 +74,7 @@ void Trace::logEvent(char ph, const char* name, char sep) {
 
   fprintf(
       log_file_,
-      "{ \"name\": \"%s\", \"ph\": \"%c\", \"pid\": %u, \"tid\": %u, \"ts\": %.0f, \"be us\": %.0f}%c\n",
+      "{ \"name\": \"%s\", \"ph\": \"%c\", \"pid\": %u, \"tid\": %u, \"ts\": %.0f, \"b_to_e\": %.0f}%c\n",
       name,
       ph,
       pid,
