@@ -55,6 +55,14 @@ Trace::~Trace() {
 void Trace::logEvent(char ph, const char* name, char sep) {
   const std::chrono::duration<double> d = Clock::now() - start_timestamp_;
   const double elapsed = d.count() * 1e6;
+  double elapsed_be = 0.0; // Elapsed time between phases B and E
+
+  if (ph == 'B') {
+    phase_b_timestamp_ = Clock::now();
+  } else if (ph == 'E') {
+    const std::chrono::duration<double> d_be = Clock::now() - phase_b_timestamp_;
+    elapsed_be = d_be.count() * 1e6;
+  }
 
 #ifdef _WIN32
   const unsigned int pid = GetCurrentProcessId();
@@ -66,12 +74,13 @@ void Trace::logEvent(char ph, const char* name, char sep) {
 
   fprintf(
       log_file_,
-      "{ \"name\": \"%s\", \"ph\": \"%c\", \"pid\": %u, \"tid\": %u, \"ts\": %.0f }%c\n",
+      "{ \"name\": \"%s\", \"ph\": \"%c\", \"pid\": %u, \"tid\": %u, \"ts\": %.0f, \"be us\": %.0f}%c\n",
       name,
       ph,
       pid,
       tid,
       elapsed,
+      elapsed_be,
       sep);
 }
 

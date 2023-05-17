@@ -72,6 +72,7 @@ class TORCH_CUDA_CU_API Trace : public NonCopyable {
  private:
   FILE* log_file_ = nullptr;
   Clock::time_point start_timestamp_;
+  Clock::time_point phase_b_timestamp_; // I am too lazy to post-process the log file
   bool record_nvtx_range_ = true;
 };
 
