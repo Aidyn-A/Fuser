@@ -10,8 +10,8 @@
 #include <executor_utils.h>
 #include <expr_evaluator.h>
 #include <instrumentation.h>
-#include <ir_iostream.h>
-#include <ir_utils.h>
+#include <ir/iostream.h>
+#include <ir/utils.h>
 #include <root_domain_map.h>
 #include <scheduler/debug_utils.h>
 #include <scheduler/matmul_utils.h>
@@ -965,8 +965,7 @@ SchedulerRuntimeInfo::SchedulerRuntimeInfo(
     if (auto tensor_arg_abstract =
             dynamic_cast<const TensorArgAbstract*>(kernel_arg)) {
       auto fusion_inp = complete_fusion_->inputs()[inp_i];
-      auto data_ptr = tensor_arg_abstract->getPointer();
-      input_ptrs_[fusion_inp] = (size_t)data_ptr;
+      input_ptrs_[fusion_inp] = tensor_arg_abstract->getPointerAddress();
 
       // find and push discontiguous stride
       auto dtype_size = dataTypeSize(tensor_arg_abstract->getDataType());

@@ -11,7 +11,7 @@
 #include <ATen/cuda/CUDAGeneratorImpl.h>
 #include <c10/util/Exception.h>
 #include <expr_evaluator.h>
-#include <ir_all_nodes.h>
+#include <ir/all_nodes.h>
 #include <torch/csrc/jit/ir/ir.h>
 #include <type.h>
 #include <array>
@@ -204,8 +204,8 @@ struct TensorArgAbstract : ArgAbstract {
         false, "The stride of an abstract tensor arg is not known.");
   }
 
-  void* getPointer() const {
-    return tensor_.data_ptr();
+  size_t getPointerAddress() const {
+    return (size_t)tensor_.data_ptr();
   }
 
   DataType getDataType() const {
@@ -256,7 +256,7 @@ struct TensorArgAbstract : ArgAbstract {
     for (auto i = 0; i < rank; i++) {
       ss << getSize(i) << ", ";
     }
-    ss << ") pointer: " << getPointer();
+    ss << ") pointer: " << getPointerAddress();
     return ss.str();
   }
 
@@ -375,6 +375,12 @@ class TORCH_CUDA_CU_API KernelArgumentHolder {
   //! Computes the smallest index type for the currently held
   //! arguments. It does not consider any other tensors used in a kernel.
   PrimDataType getSmallestIndexTypeOfArguments() const;
+
+  // Push a tensor proxy to the arguments
+  void pushTensorProxy(
+      const std::vector<int64_t>& sizes,
+      const std::vector<int64_t>& strides,
+      at::ScalarType dtype);
 
   // Push a tensor to the arguments
   void push(const at::Tensor& tensor);
